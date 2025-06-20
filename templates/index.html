@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - NEWAY SECURITY CCTV CLOCKING SYSTEM{% endblock %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block additional_css %}
+<style>
+    .feed-container {
+        position: relative;
+    }
+    #video-stream {
+        width: 100%;
+        height: auto;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    .stats-container {
+        margin-bottom: 20px;
+    }
+    .status-indicator {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
+    .status-online {
+        background-color: green;
+    }
+    .status-offline {
+        background-color: red;
+    }
+    .recent-events {
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        padding: 15px;
+        max-height: 250px;
+        overflow-y: auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="feed-container mb-4">
+    <h3 class="mb-3"><i class="fas fa-video"></i> Live Video Feed</h3>
+    <div id="video-container">
+        <img id="video-stream" src="{{ url_for('video_feed') }}" alt="Live Video Feed">
+    </div>
+</div>
+
+<div class="stats-container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">System Status</h5>
+                    <p class="card-text"><span class="status-indicator status-online"></span> Camera: {{ 'Connected' if camera_connected else 'Disconnected' }}</p>
+                    <p class="card-text"><span class="status-indicator status-online"></span> Monitoring: Active</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Quick Stats</h5>
+                    <p class="card-text">Employees Monitored: {{ employees|length }}</p>
+                    <p class="card-text">Total Recognitions Today: <span id="total-recognitions">0</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Recent Events</h5>
+                    <div class="recent-events" id="recent-events">
+                        <p>No recent events</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        // Fetch recent events
+        function fetchEvents() {
+            $.get('/api/logs', function(data) {
+                let eventsDiv = $('#recent-events');
+                eventsDiv.empty();
+                
+                if (data.success && data.events.length > 0) {
+                    data.events.forEach(event => {
+                        let eventElem = $('<p>').text(`[${event.Date} ${event.Time}] ${event.Name} - ${event.Event}`);
+                        eventsDiv.append(eventElem);
+                    });
+                } else {
+                    eventsDiv.append('<p>No recent events</p>');
+                }
+            });
+        }
+        
+        // Fetch quick stats
+        function fetchQuickStats() {
+            $.get('/api/daily_summary', function(data) {
+                if (data.success) {
+                    $('#total-recognitions').text(data.summary.length);
+                }
+            });
+        }
+        
+        // Initial fetch
+        fetchEvents();
+        fetchQuickStats();
+        
+        // Refresh every 30 seconds
+        setInterval(fetchEvents, 30000);
+        setInterval(fetchQuickStats, 30000);
+    });
+</script>
+
+{% endblock %}
+

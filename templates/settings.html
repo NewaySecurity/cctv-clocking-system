@@ -1,0 +1,607 @@
+{% extends "base.html" %}
+
+{% block title %}System Settings - NEWAY SECURITY CCTV CLOCKING SYSTEM{% endblock %}
+
+{% block page_title %}System Settings{% endblock %}
+
+{% block additional_css %}
+<style>
+    .settings-container {
+        background-color: white;
+        border-radius: 5px;
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .nav-tabs {
+        border-bottom: 2px solid var(--secondary-color);
+    }
+    
+    .nav-tabs .nav-link {
+        color: var(--gray-dark);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 0;
+        margin-right: 5px;
+    }
+    
+    .nav-tabs .nav-link:hover {
+        border: none;
+        background-color: rgba(255, 215, 0, 0.1);
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: var(--primary-color);
+        background-color: white;
+        border: none;
+        border-bottom: 3px solid var(--secondary-color);
+        font-weight: bold;
+    }
+    
+    .settings-section {
+        margin-bottom: 20px;
+        padding: 15px;
+        border-radius: 5px;
+        background-color: var(--gray-light);
+    }
+    
+    .settings-section h4 {
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--secondary-color);
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .settings-section .form-label {
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+    
+    .settings-section .form-text {
+        color: var(--gray-medium);
+    }
+    
+    .settings-actions {
+        margin-top: 30px;
+        text-align: right;
+    }
+    
+    .input-group-text {
+        background-color: var(--primary-color);
+        color: var(--secondary-color);
+        border: 1px solid var(--primary-color);
+    }
+    
+    .was-validated .form-control:invalid {
+        border-color: var(--accent-color);
+    }
+    
+    .was-validated .form-control:valid {
+        border-color: var(--secondary-color);
+    }
+    
+    .range-value {
+        display: inline-block;
+        width: 40px;
+        text-align: center;
+        margin-left: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <h3 class="mb-4"><i class="fas fa-cog"></i> System Configuration</h3>
+    
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-tabs mb-4" id="settingsTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="camera-tab" data-bs-toggle="tab" data-bs-target="#camera" type="button" role="tab" aria-controls="camera" aria-selected="true">
+                <i class="fas fa-video"></i> Camera
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="face-tab" data-bs-toggle="tab" data-bs-target="#face" type="button" role="tab" aria-controls="face" aria-selected="false">
+                <i class="fas fa-user-check"></i> Face Recognition
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="audio-tab" data-bs-toggle="tab" data-bs-target="#audio" type="button" role="tab" aria-controls="audio" aria-selected="false">
+                <i class="fas fa-volume-up"></i> Audio
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="logging-tab" data-bs-toggle="tab" data-bs-target="#logging" type="button" role="tab" aria-controls="logging" aria-selected="false">
+                <i class="fas fa-clipboard-list"></i> Logging
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab" aria-controls="security" aria-selected="false">
+                <i class="fas fa-lock"></i> Security
+            </button>
+        </li>
+    </ul>
+    
+    <!-- Settings Form -->
+    <form id="settings-form" class="needs-validation" novalidate>
+        <div class="tab-content" id="settingsTabsContent">
+            <!-- Camera Settings -->
+            <div class="tab-pane fade show active" id="camera" role="tabpanel" aria-labelledby="camera-tab">
+                <div class="settings-section">
+                    <h4>Camera Configuration</h4>
+                    
+                    <div class="mb-3">
+                        <label for="camera-url" class="form-label">RTSP Camera URL</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-link"></i></span>
+                            <input type="text" class="form-control" id="camera-url" name="camera.url" placeholder="rtsp://username:password@ip:port/stream" value="{{ config.camera.url }}" required>
+                            <div class="invalid-feedback">
+                                Please enter a valid RTSP URL.
+                            </div>
+                        </div>
+                        <div class="form-text">The RTSP URL for your camera (e.g., rtsp://admin:password@192.168.1.100:554/stream)</div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="camera-fallback" class="form-label">Fallback Camera Index</label>
+                            <input type="number" class="form-control" id="camera-fallback" name="camera.fallback_index" min="0" max="10" value="{{ config.camera.fallback_index }}" required>
+                            <div class="form-text">Local camera index to use if RTSP fails (0 is usually built-in webcam)</div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="camera-width" class="form-label">Frame Width</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="camera-width" name="camera.frame_width" min="320" max="3840" step="1" value="{{ config.camera.frame_width }}" required>
+                                <span class="input-group-text">px</span>
+                            </div>
+                            <div class="form-text">Width of processed video frames</div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="camera-height" class="form-label">Frame Height</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="camera-height" name="camera.frame_height" min="240" max="2160" step="1" value="{{ config.camera.frame_height }}" required>
+                                <span class="input-group-text">px</span>
+                            </div>
+                            <div class="form-text">Height of processed video frames</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="camera-fps" class="form-label">FPS Limit</label>
+                            <div class="d-flex align-items-center">
+                                <input type="range" class="form-range" id="camera-fps" name="camera.fps_limit" min="1" max="30" step="1" value="{{ config.camera.fps_limit }}" oninput="document.getElementById('camera-fps-value').textContent = this.value">
+                                <span id="camera-fps-value" class="range-value">{{ config.camera.fps_limit }}</span>
+                            </div>
+                            <div class="form-text">Limit processing framerate to reduce CPU usage</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="camera-reconnect" class="form-label">Reconnect Interval</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="camera-reconnect" name="camera.reconnect_interval" min="1" max="60" value="{{ config.camera.reconnect_interval }}" required>
+                                <span class="input-group-text">seconds</span>
+                            </div>
+                            <div class="form-text">Time between reconnection attempts if camera connection is lost</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Face Recognition Settings -->
+            <div class="tab-pane fade" id="face" role="tabpanel" aria-labelledby="face-tab">
+                <div class="settings-section">
+                    <h4>Face Recognition Settings</h4>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Recognition Method</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="face_recognition.method" id="method-hog" value="hog" {% if config.face_recognition.method == 'hog' %}checked{% endif %}>
+                            <label class="form-check-label" for="method-hog">
+                                HOG (faster, less accurate)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="face_recognition.method" id="method-cnn" value="cnn" {% if config.face_recognition.method == 'cnn' %}checked{% endif %}>
+                            <label class="form-check-label" for="method-cnn">
+                                CNN (slower, more accurate, requires GPU)
+                            </label>
+                        </div>
+                        <div class="form-text">HOG is recommended for CPU-only systems, CNN for systems with GPU</div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="face-tolerance" class="form-label">Match Tolerance</label>
+                            <div class="d-flex align-items-center">
+                                <input type="range" class="form-range" id="face-tolerance" name="face_recognition.tolerance" min="0.3" max="0.9" step="0.05" value="{{ config.face_recognition.tolerance }}" oninput="document.getElementById('face-tolerance-value').textContent = this.value">
+                                <span id="face-tolerance-value" class="range-value">{{ config.face_recognition.tolerance }}</span>
+                            </div>
+                            <div class="form-text">Lower = stricter matching, Higher = more permissive (0.6 recommended)</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="min-face-size" class="form-label">Minimum Face Size</label>
+                            <div class="d-flex align-items-center">
+                                <input type="range" class="form-range" id="min-face-size" name="face_recognition.min_face_size" min="0.01" max="0.3" step="0.01" value="{{ config.face_recognition.min_face_size }}" oninput="document.getElementById('min-face-size-value').textContent = Math.round(this.value * 100) + '%'">
+                                <span id="min-face-size-value" class="range-value">{{ (config.face_recognition.min_face_size * 100)|round|int }}%</span>
+                            </div>
+                            <div class="form-text">Percentage of frame height (smaller value detects distant faces)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="downscale-factor" class="form-label">Downscale Factor</label>
+                            <select class="form-select" id="downscale-factor" name="face_recognition.downscale_factor">
+                                <option value="1" {% if config.face_recognition.downscale_factor == 1 %}selected{% endif %}>1x (Original size, slowest)</option>
+                                <option value="2" {% if config.face_recognition.downscale_factor == 2 %}selected{% endif %}>2x (Half size, balanced)</option>
+                                <option value="4" {% if config.face_recognition.downscale_factor == 4 %}selected{% endif %}>4x (Quarter size, fastest)</option>
+                            </select>
+                            <div class="form-text">Processing resolution factor (higher = faster but less accurate)</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="recognition-timeout" class="form-label">Recognition Timeout</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="recognition-timeout" name="face_recognition.recognition_timeout" min="1" max="24" value="{{ config.face_recognition.recognition_timeout }}" required>
+                                <span class="input-group-text">hours</span>
+                            </div>
+                            <div class="form-text">How long before the same person can be logged again</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="show-boxes" name="face_recognition.show_bounding_boxes" {% if config.face_recognition.show_bounding_boxes %}checked{% endif %}>
+                            <label class="form-check-label" for="show-boxes">Show bounding boxes</label>
+                        </div>
+                        <div class="form-text">Display boxes around detected faces in the video feed</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="show-names" name="face_recognition.show_names" {% if config.face_recognition.show_names %}checked{% endif %}>
+                            <label class="form-check-label" for="show-names">Show names</label>
+                        </div>
+                        <div class="form-text">Display recognized names in the video feed</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="log-unknown" name="face_recognition.log_unknown_faces" {% if config.face_recognition.log_unknown_faces %}checked{% endif %}>
+                            <label class="form-check-label" for="log-unknown">Log unknown faces</label>
+                        </div>
+                        <div class="form-text">Record entries for unrecognized faces</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Audio Settings -->
+            <div class="tab-pane fade" id="audio" role="tabpanel" aria-labelledby="audio-tab">
+                <div class="settings-section">
+                    <h4>Audio Configuration</h4>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Text-to-Speech Engine</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="audio.engine" id="engine-pyttsx3" value="pyttsx3" {% if config.audio.engine == 'pyttsx3' %}checked{% endif %}>
+                            <label class="form-check-label" for="engine-pyttsx3">
+                                pyttsx3 (offline, no internet required)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="audio.engine" id="engine-gtts" value="gtts" {% if config.audio.engine == 'gtts' %}checked{% endif %}>
+                            <label class="form-check-label" for="engine-gtts">
+                                Google Text-to-Speech (online, better quality)
+                            </label>
+                        </div>
+                        <div class="form-text">Select the engine for voice synthesis</div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="audio-volume" class="form-label">Volume</label>
+                            <div class="d-flex align-items-center">
+                                <input type="range" class="form-range" id="audio-volume" name="audio.volume" min="0" max="1" step="0.1" value="{{ config.audio.volume }}" oninput="document.getElementById('audio-volume-value').textContent = this.value">
+                                <span id="audio-volume-value" class="range-value">{{ config.audio.volume }}</span>
+                            </div>
+                            <div class="form-text">Audio playback volume (0.0-1.0)</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="audio-rate" class="form-label">Speech Rate</label>
+                            <div class="d-flex align-items-center">
+                                <input type="range" class="form-range" id="audio-rate" name="audio.rate" min="50" max="300" step="10" value="{{ config.audio.rate }}" oninput="document.getElementById('audio-rate-value').textContent = this.value">
+                                <span id="audio-rate-value" class="range-value">{{ config.audio.rate }}</span>
+                            </div>
+                            <div class="form-text">Words per minute (150-200 is normal speech)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="audio-language" class="form-label">Language</label>
+                            <select class="form-select" id="audio-language" name="audio.language">
+                                <option value="en" {% if config.audio.language == 'en' %}selected{% endif %}>English</option>
+                                <option value="af" {% if config.audio.language == 'af' %}selected{% endif %}>Afrikaans</option>
+                                <option value="xh" {% if config.audio.language == 'xh' %}selected{% endif %}>Xhosa</option>
+                                <option value="zu" {% if config.audio.language == 'zu' %}selected{% endif %}>Zulu</option>
+                                <option value="st" {% if config.audio.language == 'st' %}selected{% endif %}>Sesotho</option>
+                            </select>
+                            <div class="form-text">Language for voice synthesis (gTTS only)</div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="greeting-timeout" class="form-label">Greeting Timeout</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="greeting-timeout" name="audio.greeting_timeout" min="10" max="300" value="{{ config.audio.greeting_timeout }}" required>
+                                <span class="input-group-text">seconds</span>
+                            </div>
+                            <div class="form-text">Prevent repeated greetings within this time period</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="welcome-message" class="form-label">Welcome Message Template</label>
+                        <input type="text" class="form-control" id="welcome-message" name="audio.welcome_message" value="{{ config.audio.welcome_message }}" required>
+                        <div class="form-text">Use {name} as a placeholder for the person's name</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="goodbye-message" class="form-label">Goodbye Message Template</label>
+                        <input type="text" class="form-control" id="goodbye-message" name="audio.goodbye_message" value="{{ config.audio.goodbye_message }}" required>
+                        <div class="form-text">Use {name} as a placeholder for the person's name</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="unknown-message" class="form-label">Unknown Person Message</label>
+                        <input type="text" class="form-control" id="unknown-message" name="audio.unknown_message" value="{{ config.audio.unknown_message }}" required>
+                        <div class="form-text">Message played when an unknown face is detected</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Logging Settings -->
+            <div class="tab-pane fade" id="logging" role="tabpanel" aria-labelledby="logging-tab">
+                <div class="settings-section">
+                    <h4>Attendance Logging</h4>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Logging Format</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="logging.format" id="format-csv" value="csv" {% if config.logging.format == 'csv' %}checked{% endif %}>
+                            <label class="form-check-label" for="format-csv">
+                                CSV Files (local storage)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="logging.format" id="format-sheets" value="google_sheets" {% if config.logging.format == 'google_sheets' %}checked{% endif %}>
+                            <label class="form-check-label" for="format-sheets">
+                                Google Sheets (cloud storage)
+                            </label>
+                        </div>
+                        <div class="form-text">Where to store attendance records</div>
+                    </div>
+                    
+                    <div class="mb-3" id="csv-settings" {% if config.logging.format != 'csv' %}style="display:none"{% endif %}>
+                        <label for="csv-pattern" class="form-label">CSV Filename Pattern</label>
+                        <input type="text" class="form-control" id="csv-pattern" name="logging.csv_filename_pattern" value="{{ config.logging.csv_filename_pattern }}">
+                        <div class="form-text">Pattern for monthly CSV files (Python strftime format)</div>
+                    </div>
+                    
+                    <div id="gsheets-settings" {% if config.logging.format != 'google_sheets' %}style="display:none"{% endif %}>
+                        <div class="mb-3">
+                            <label for="sheet-id" class="form-label">Google Sheet ID</label>
+                            <input type="text" class="form-control" id="sheet-id" name="logging.google_sheets.sheet_id" value="{{ config.logging.google_sheets.sheet_id }}">
+                            <div class="form-text">ID of your Google Sheet (found in the URL)</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="sheet-name" class="form-label">Sheet Name</label>
+                            <input type="text" class="form-control" id="sheet-name" name="logging.google_sheets.sheet_name" value="{{ config.logging.google_sheets.sheet_name }}">
+                            <div class="form-text">Name of the sheet tab to store attendance records</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="credentials-file" class="form-label">Credentials File</label>
+                            <input type="text" class="form-control" id="credentials-file" name="logging.google_sheets.credentials_file" value="{{ config.logging.google_sheets.credentials_file }}">
+                            <div class="form-text">Path to Google API credentials JSON file</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Security Settings -->
+            <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
+                <div class="settings-section">
+                    <h4>Security Settings</h4>
+                    
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="enable-auth" name="dashboard.enable_authentication" {% if config.dashboard.enable_authentication %}checked{% endif %}>
+                            <label class="form-check-label" for="enable-auth">Enable authentication</label>
+                        </div>
+                        <div class="form-text">Require login to access the dashboard</div>
+                    </div>
+                    
+                    <div id="auth-settings" {% if not config.dashboard.enable_authentication %}style="display:none"{% endif %}>
+                        <div class="mb-3">
+                            <label for="admin-username" class="form-label">Admin Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" class="form-control" id="admin-username" name="dashboard.username" value="{{ config.dashboard.username }}">
+                            </div>
+                            <div class="form-text">Username for dashboard login</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="admin-password" class="form-label">Admin Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                <input type="password" class="form-control" id="admin-password" name="dashboard.password" placeholder="Leave blank to keep current password">
+                            </div>
+                            <div class="form-text">Password for dashboard login (leave blank to keep current)</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="session-timeout" class="form-label">Session Timeout</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="session-timeout" name="dashboard.session_timeout" min="5" max="1440" value="{{ config.dashboard.session_timeout }}">
+                                <span class="input-group-text">minutes</span>
+                            </div>
+                            <div class="form-text">Time before automatic logout due to inactivity</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="settings-actions">
+            <button type="button" class="btn btn-outline-secondary me-2" id="reset-settings">
+                <i class="fas fa-undo"></i> Reset to Defaults
+            </button>
+            <button type="submit" class="btn btn-primary" id="save-settings">
+                <i class="fas fa-save"></i> Save Settings
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    // Form validation
+    const form = document.getElementById('settings-form');
+    
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        if (!form.checkValidity()) {
+            event.stopPropagation();
+            form.classList.add('was-validated');
+            return;
+        }
+        
+        // Show loading state
+        const saveButton = document.getElementById('save-settings');
+        const originalText = saveButton.innerHTML;
+        saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        saveButton.disabled = true;
+        
+        // Collect form data
+        const formData = new FormData(form);
+        const formDataObj = {};
+        
+        // Convert FormData to object with nested properties
+        for (const [key, value] of formData.entries()) {
+            const keys = key.split('.');
+            let obj = formDataObj;
+            
+            for (let i = 0; i < keys.length - 1; i++) {
+                if (!obj[keys[i]]) {
+                    obj[keys[i]] = {};
+                }
+                obj = obj[keys[i]];
+            }
+            
+            obj[keys[keys.length - 1]] = value;
+        }
+        
+        // Send data to server
+        $.ajax({
+            url: '/api/update_settings',
+            type: 'POST',
+            data: JSON.stringify(formDataObj),
+            contentType: 'application/json',
+            success: function(response) {
+                if (response.success) {
+                    // Show success alert
+                    const alert = `
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle"></i> Settings saved successfully!
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    `;
+                    $('.settings-container').prepend(alert);
+                    
+                    // Reset form validation state
+                    form.classList.remove('was-validated');
+                } else {
+                    // Show error alert
+                    alert('Error: ' + response.error);
+                }
+                
+                // Restore button
+                saveButton.innerHTML = originalText;
+                saveButton.disabled = false;
+            },
+            error: function(xhr, status, error) {
+                // Show error alert
+                alert('Error saving settings: ' + error);
+                
+                // Restore button
+                saveButton.innerHTML = originalText;
+                saveButton.disabled = false;
+            }
+        });
+    });
+    
+    // Toggle dependent settings visibility
+    $('#format-csv, #format-sheets').change(function() {
+        if ($('#format-csv').is(':checked')) {
+            $('#csv-settings').show();
+            $('#gsheets-settings').hide();
+        } else {
+            $('#csv-settings').hide();
+            $('#gsheets-settings').show();
+        }
+    });
+    
+    $('#enable-auth').change(function() {
+        if ($(this).is(':checked')) {
+            $('#auth-settings').show();
+        } else {
+            $('#auth-settings').hide();
+        }
+    });
+    
+    // Reset settings to defaults
+    $('#reset-settings').click(function() {
+        if (confirm('Are you sure you want to reset all settings to default values? This cannot be undone.')) {
+            // Reload the page to get default settings
+            location.reload();
+        }
+    });
+    
+    // Test connection button for camera
+    $('#test-camera').click(function() {
+        const url = $('#camera-url').val();
+        
+        // Validate URL
+        if (!url) {
+            alert('Please enter an RTSP URL first.');
+            return;
+        }
+        
+        // Show loading state
+        $(this).html('<i class="fas fa-spinner fa-spin"></i> Testing...').prop('disabled', true);
+        
+        // Send test request (implementation would depend on your backend)
+        setTimeout(() => {
+            // This is just a placeholder - real implementation would call an API
+            $(this).html('<i class="fas fa-check"></i> Connected!').addClass('btn-success').removeClass('btn-primary');
+            
+            // Reset after 3 seconds
+            setTimeout(() => {
+                $(this).html('<i class="fas fa-video"></i> Test Connection').addClass('btn-primary').removeClass('btn-success').prop('disabled', false);
+            }, 3000);
+        }, 2000);
+    });
+});
+</script>
+{% endblock %}
+

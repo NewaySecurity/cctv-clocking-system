@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block title %}Attendance Logs - NEWAY SECURITY CCTV CLOCKING SYSTEM{% endblock %}
+
+{% block page_title %}Attendance Logs{% endblock %}
+
+{% block head %}
+<!-- DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.bootstrap5.min.css">
+<!-- DateRangePicker CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+{% endblock %}
+
+{% block additional_css %}
+<style>
+    .filter-card {
+        margin-bottom: 20px;
+    }
+    .table-container {
+        background-color: white;
+        border-radius: 5px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .view-toggle {
+        margin-bottom: 20px;
+    }
+    .view-toggle .btn {
+        width: 120px;
+    }
+    .summary-table th {
+        width: 25%;
+    }
+    .no-data-message {
+        text-align: center;
+        padding: 20px;
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- View Toggle Buttons -->
+<div class="view-toggle">
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-primary active" id="btn-logs-view">Log View</button>
+        <button type="button" class="btn btn-outline-primary" id="btn-summary-view">Summary View</button>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card filter-card">
+    <div class="card-body">
+        <h5 class="card-title">Filters</h5>
+        <form id="filter-form" class="row g-3">
+            <div class="col-md-5">
+                <label for="date-range" class="form-label">Date Range</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                    <input type="text" class="form-control" id="date-range" name="date-range">
+                </div>
+            </div>
+            <div class="col-md-5">
+                <label for="employee" class="form-label">Employee</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <select class="form-select" id="employee" name="employee">
+                        <option value="">All Employees</option>
+                        <!-- Employee options will be populated dynamically -->
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-filter"></i> Apply Filters
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Logs View -->
+<div id="logs-view" class="table-container">
+    <h4 class="mb-3">Attendance Log Records</h4>
+    <table id="logs-table" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Event</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Table data will be populated via AJAX -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Summary View -->
+<div id="summary-view" class="table-container" style="display: none;">
+    <h4 class="mb-3">Daily Attendance Summary</h4>
+    <table id="summary-table" class="table table-striped table-bordered summary-table" style="width:100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>First In</th>
+                <th>Last Out</th>
+                <th>Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Table data will be populated via AJAX -->
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- DataTables JS -->
+<script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.bootstrap5.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+
+<!-- DateRangePicker JS -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Initialize date range picker
+    $('#date-range').daterangepicker({
+        startDate: moment().startOf('month'),
+        endDate: moment(),
+        ranges: {
+           'Today': [moment(), moment()],
+           'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+           'This Month': [moment().startOf('month'), moment().endOf('month')],
+           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        }
+    });
+    
+    // Load employee list
+    function loadEmployees() {
+        $.get('/api/logs', function(data) {
+            if (data.success && data.events.length > 0) {
+                let employees = new Set();
+                data.events.forEach(event => {
+                    employees.add(event.Name);
+                });
+                
+                let employeeSelect = $('#employee');
+                employeeSelect.empty();
+                employeeSelect.append('<option value="">All Employees</option>');
+                
+                // Sort employees alphabetically
+                Array.from(employees).sort().forEach(name => {
+                    employeeSelect.append(`<option value="${name}">${name}</option>`);
+                });
+            }
+        });
+    }
+    
+    // Initialize DataTables
+    let logsTable = $('#logs-table').DataTable({
+        responsive: true,
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'print'
+        ],
+        order: [[1, 'desc'], [2, 'desc']],
+        columns: [
+            { data: 'Name' },
+            { data: 'Date' },
+            { data: 'Time' },
+            { data: 'Event' }
+        ],
+        language: {
+            emptyTable: "No attendance records found"
+        }
+    });
+    
+    let summaryTable = $('#summary-table').DataTable({
+        responsive: true,
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'print'
+        ],
+        columns: [
+            { data: 'Name' },
+            { data: 'First In' },
+            { data: 'Last Out' },
+            { data: 'Duration' }
+        ],
+        language: {
+            emptyTable: "No summary data available"
+        }
+    });
+    
+    // Load log data
+    function loadLogs() {
+        // Get filter values
+        const dateRange = $('#date-range').val().split(' - ');
+        const startDate = dateRange[0];
+        const endDate = dateRange[1];
+        const employee = $('#employee').val();
+        
+        // Show loading indicator
+        logsTable.clear().draw();
+        $('#logs-view').append('<div id="loading-logs" class="text-center p-3"><i class="fas fa-spinner fa-spin"></i> Loading logs...</div>');
+        
+        // Fetch log data
+        $.get('/api/logs', {
+            start_date: startDate,
+            end_date: endDate,
+            name: employee
+        }, function(data) {
+            // Remove loading indicator
+            $('#loading-logs').remove();
+            
+            if (data.success) {
+                // Add data to table
+                logsTable.clear();
+                if (data.events.length > 0) {
+                    logsTable.rows.add(data.events).draw();
+                } else {
+                    logsTable.draw();
+                }
+            } else {
+                alert('Error loading log data: ' + data.error);
+            }
+        });
+    }
+    
+    // Load summary data
+    function loadSummary() {
+        // Get filter values
+        const dateRange = $('#date-range').val().split(' - ');
+        const date = dateRange[0]; // Use start date for summary
+        
+        // Show loading indicator
+        summaryTable.clear().draw();
+        $('#summary-view').append('<div id="loading-summary" class="text-center p-3"><i class="fas fa-spinner fa-spin"></i> Loading summary...</div>');
+        
+        // Fetch summary data
+        $.get('/api/daily_summary', {
+            date: date
+        }, function(data) {
+            // Remove loading indicator
+            $('#loading-summary').remove();
+            
+            if (data.success) {
+                // Add data to table
+                summaryTable.clear();
+                if (data.summary.length > 0) {
+                    summaryTable.rows.add(data.summary).draw();
+                } else {
+                    summaryTable.draw();
+                }
+            } else {
+                alert('Error loading summary data: ' + data.error);
+            }
+        });
+    }
+    
+    // Handle view toggle
+    $('#btn-logs-view').click(function() {
+        $(this).addClass('active').removeClass('btn-outline-primary').addClass('btn-primary');
+        $('#btn-summary-view').removeClass('active').addClass('btn-outline-primary').removeClass('btn-primary');
+        $('#logs-view').show();
+        $('#summary-view').hide();
+    });
+    
+    $('#btn-summary-view').click(function() {
+        $(this).addClass('active').removeClass('btn-outline-primary').addClass('btn-primary');
+        $('#btn-logs-view').removeClass('active').addClass('btn-outline-primary').removeClass('btn-primary');
+        $('#logs-view').hide();
+        $('#summary-view').show();
+        loadSummary();
+    });
+    
+    // Handle filter form submission
+    $('#filter-form').submit(function(e) {
+        e.preventDefault();
+        loadLogs();
+        
+        // Also update summary if that view is active
+        if ($('#summary-view').is(':visible')) {
+            loadSummary();
+        }
+    });
+    
+    // Initial data load
+    loadEmployees();
+    loadLogs();
+});
+</script>
+{% endblock %}
+

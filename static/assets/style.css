@@ -1,0 +1,200 @@
+/* 
+ * NEWAY SECURITY CCTV CLOCKING SYSTEM
+ * Custom CSS styles with black, gold, and red color scheme
+ */
+
+:root {
+    --primary-color: #000000;     /* Black */
+    --secondary-color: #FFD700;   /* Gold */
+    --accent-color: #FF0000;      /* Red */
+    --text-light: #FFFFFF;        /* White text for dark backgrounds */
+    --text-dark: #000000;         /* Black text for light backgrounds */
+    --gray-light: #F8F9FA;        /* Light gray for backgrounds */
+    --gray-medium: #6C757D;       /* Medium gray for secondary text */
+    --gray-dark: #343A40;         /* Dark gray for borders/elements */
+}
+
+/* Sidebar styling */
+.sidebar {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+}
+
+.sidebar .nav-link {
+    color: var(--gray-light);
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.sidebar .nav-link:hover {
+    color: var(--secondary-color);
+    background-color: rgba(255, 215, 0, 0.1);
+}
+
+.sidebar .nav-link.active {
+    color: var(--secondary-color);
+    background-color: rgba(255, 215, 0, 0.2);
+    border-left: 3px solid var(--secondary-color);
+}
+
+.sidebar .nav-link i {
+    margin-right: 10px;
+    color: var(--secondary-color);
+}
+
+.system-name {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    text-align: center;
+    padding: 0 15px;
+}
+
+.system-name h5 {
+    color: var(--secondary-color);
+    font-weight: bold;
+}
+
+.system-name h6 {
+    color: var(--text-light);
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 15px;
+}
+
+.logo-img {
+    max-width: 80%;
+    height: auto;
+}
+
+/* Navigation & Buttons */
+.btn-primary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--text-dark);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: #E6C200; /* Darker gold */
+    border-color: #E6C200;
+    color: var(--text-dark);
+}
+
+.btn-danger, .btn-outline-danger:hover {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.btn-outline-light {
+    color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.btn-outline-light:hover {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+}
+
+/* Cards and panels */
+.card {
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.card-header, .modal-header {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border-bottom: 2px solid var(--secondary-color);
+}
+
+/* Tables */
+.table th {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border-bottom: 2px solid var(--secondary-color);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--text-dark);
+}
+
+.pagination .page-link {
+    color: var(--primary-color);
+}
+
+/* Status indicators */
+.status-indicator.status-online {
+    background-color: var(--secondary-color);
+}
+
+.status-indicator.status-offline {
+    background-color: var(--accent-color);
+}
+
+/* Alerts */
+.alert-danger {
+    background-color: var(--accent-color);
+    color: var(--text-light);
+}
+
+.alert-warning {
+    background-color: var(--secondary-color);
+    color: var(--text-dark);
+}
+
+/* Form elements */
+.form-control:focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25);
+}
+
+/* Login page */
+.login-container {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.login-logo h2 {
+    color: var(--primary-color);
+}
+
+.login-logo p {
+    color: var(--gray-medium);
+}
+
+.btn-login {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--text-dark);
+}
+
+.btn-login:hover {
+    background-color: #E6C200; /* Darker gold */
+    border-color: #E6C200;
+}
+
+/* Responsiveness */
+@media (max-width: 767.98px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    .main-content {
+        margin-left: 0;
+    }
+    .logout-btn {
+        position: relative;
+        margin-top: 20px;
+        width: 100%;
+    }
+}
+

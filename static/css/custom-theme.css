@@ -1,0 +1,405 @@
+/**
+ * NEWAY SECURITY CCTV CLOCKING SYSTEM
+ * Custom Theme Overrides - Black and Gold Theme
+ */
+
+/* Import custom fonts */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+/* Color Variables */
+:root {
+    --primary-black: #000000;
+    --primary-gold: #FFD700;
+    --accent-red: #FF0000;
+    --dark-gold: #D4AF37;
+    --light-gold: #FFDF5E;
+    --off-black: #121212;
+    --dark-gray: #333333;
+    --medium-gray: #666666;
+    --light-gray: #E5E5E5;
+    --white: #FFFFFF;
+    
+    /* Semantic colors */
+    --text-primary: var(--white);
+    --text-secondary: var(--light-gold);
+    --text-muted: rgba(255, 255, 255, 0.6);
+    --bg-primary: var(--primary-black);
+    --bg-secondary: var(--off-black);
+    --bg-accent: var(--dark-gold);
+    --border-color: var(--primary-gold);
+}
+
+/* Global Typography */
+body {
+    font-family: 'Roboto', sans-serif;
+    color: var(--dark-gray);
+    background-color: #f5f5f5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    background: linear-gradient(180deg, var(--primary-black) 0%, var(--off-black) 100%);
+    border-right: 1px solid var(--dark-gold);
+}
+
+.logo-container {
+    padding: 20px 0;
+    text-align: center;
+}
+
+.logo-img {
+    max-width: 160px;
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3));
+    transition: all 0.3s ease;
+}
+
+.logo-img:hover {
+    filter: drop-shadow(0 2px 8px rgba(255, 215, 0, 0.5));
+}
+
+.system-name h5 {
+    color: var(--primary-gold);
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+    margin-bottom: 0;
+    text-transform: uppercase;
+}
+
+.system-name h6 {
+    color: var(--white);
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+.sidebar .nav-link {
+    color: var(--light-gray);
+    border-left: 3px solid transparent;
+    padding: 12px 15px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.sidebar .nav-link:hover {
+    background-color: rgba(255, 215, 0, 0.1);
+    color: var(--primary-gold);
+    border-left: 3px solid var(--primary-gold);
+}
+
+.sidebar .nav-link.active {
+    background-color: rgba(255, 215, 0, 0.15);
+    color: var(--primary-gold);
+    border-left: 3px solid var(--primary-gold);
+    font-weight: 600;
+}
+
+.sidebar .nav-link i {
+    width: 24px;
+    text-align: center;
+    color: var(--primary-gold);
+    margin-right: 10px;
+}
+
+/* Button Styling */
+.btn-primary {
+    background-color: var(--primary-gold);
+    border-color: var(--dark-gold);
+    color: var(--primary-black);
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--dark-gold);
+    border-color: var(--dark-gold);
+    color: var(--primary-black);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-danger {
+    background-color: var(--accent-red);
+    border: none;
+}
+
+.btn-outline-secondary {
+    border-color: var(--medium-gray);
+    color: var(--medium-gray);
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--light-gray);
+    color: var(--dark-gray);
+}
+
+.btn-outline-light {
+    border-color: var(--primary-gold);
+    color: var(--primary-gold);
+}
+
+.btn-outline-light:hover {
+    background-color: var(--primary-gold);
+    color: var(--primary-black);
+}
+
+.btn i {
+    margin-right: 5px;
+}
+
+/* Card Styling */
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    background-color: var(--primary-black);
+    color: var(--white);
+    border-bottom: 2px solid var(--primary-gold);
+    padding: 15px 20px;
+    font-weight: 500;
+}
+
+.card-title {
+    color: var(--dark-gray);
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+/* Table Styling */
+.table th {
+    background-color: var(--primary-black);
+    color: var(--white);
+    font-weight: 500;
+    border-top: none;
+    border-bottom: 2px solid var(--primary-gold);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(255, 215, 0, 0.05);
+}
+
+/* Form Styling */
+.form-control:focus {
+    border-color: var(--dark-gold);
+    box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25);
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-gold);
+    border-color: var(--dark-gold);
+}
+
+.form-range::-webkit-slider-thumb {
+    background: var(--primary-gold);
+}
+
+.form-range::-moz-range-thumb {
+    background: var(--primary-gold);
+}
+
+.input-group-text {
+    background-color: var(--primary-black);
+    color: var(--primary-gold);
+    border: 1px solid var(--dark-gray);
+}
+
+/* Alert Styling */
+.alert-success {
+    background-color: #e8f5e9;
+    border-color: #c8e6c9;
+    color: #2e7d32;
+}
+
+.alert-danger {
+    background-color: #ffebee;
+    border-color: #ffcdd2;
+    color: var(--accent-red);
+}
+
+.alert-warning {
+    background-color: #fff8e1;
+    border-color: #ffecb3;
+    color: #ff8f00;
+}
+
+/* Status Indicators */
+.status-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.status-indicator.status-online {
+    background-color: var(--primary-gold);
+    box-shadow: 0 0 5px var(--primary-gold);
+}
+
+.status-indicator.status-offline {
+    background-color: var(--accent-red);
+    box-shadow: 0 0 5px var(--accent-red);
+}
+
+.status-indicator.status-warning {
+    background-color: #FFA500;
+    box-shadow: 0 0 5px #FFA500;
+}
+
+/* Navbar Styling */
+.navbar {
+    background-color: var(--white);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.navbar-brand {
+    color: var(--primary-black);
+    font-weight: 600;
+    font-size: 1.3rem;
+}
+
+/* Footer Styling */
+.footer {
+    background-color: var(--primary-black);
+    color: var(--light-gray);
+    padding: 20px 0;
+    text-align: center;
+    font-size: 0.9rem;
+    border-top: 2px solid var(--primary-gold);
+}
+
+.footer a {
+    color: var(--primary-gold);
+    text-decoration: none;
+}
+
+/* Login Page Styling */
+.login-container {
+    background-color: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    max-width: 400px;
+}
+
+.login-logo h2 {
+    color: var(--primary-black);
+    font-weight: 700;
+}
+
+.login-logo p {
+    color: var(--dark-gray);
+    font-size: 1.1rem;
+}
+
+.login-logo img {
+    max-width: 180px;
+    margin-bottom: 15px;
+}
+
+.btn-login {
+    background-color: var(--primary-gold);
+    border-color: var(--dark-gold);
+    color: var(--primary-black);
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 5px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-login:hover {
+    background-color: var(--dark-gold);
+    border-color: var(--dark-gold);
+}
+
+/* Dashboard Specific Styling */
+.video-container {
+    position: relative;
+    background-color: var(--dark-gray);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.video-status {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: var(--white);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+}
+
+.recent-events {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.recent-event-item {
+    padding: 10px 15px;
+    border-left: 3px solid var(--primary-gold);
+    margin-bottom: 10px;
+    background-color: var(--white);
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.recent-event-time {
+    color: var(--medium-gray);
+    font-size: 0.85rem;
+}
+
+.recent-event-name {
+    font-weight: 600;
+    color: var(--dark-gray);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+    
+    .logo-img {
+        max-width: 120px;
+    }
+    
+    .system-name h5 {
+        font-size: 1.2rem;
+    }
+}
+

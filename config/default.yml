@@ -1,0 +1,84 @@
+# NEWAY SECURITY CCTV CLOCKING SYSTEM Configuration
+
+# Camera settings
+camera:
+  # RTSP camera URL (can be overridden with env var NEWAY_CAMERA_URL)
+  url: "rtsp://admin:password123@192.168.1.100:554/stream1"
+  # Fallback to webcam if RTSP fails (0 is usually the built-in webcam)
+  fallback_index: 0
+  # Reconnection settings
+  reconnect_interval: 5  # seconds
+  max_reconnect_attempts: 10
+  # Frame processing
+  frame_width: 640
+  frame_height: 480
+  fps_limit: 15  # Limit processing framerate to reduce CPU usage
+
+# Face recognition settings
+face_recognition:
+  # Recognition method: "hog" (faster) or "cnn" (more accurate but requires GPU)
+  method: "hog"
+  # Match tolerance (lower = stricter matching, higher = more permissive)
+  # Typical values: 0.5-0.7 (0.6 is a good balance)
+  tolerance: 0.6
+  # Minimum face size to detect (as percentage of frame)
+  min_face_size: 0.05
+  # Downscale factor for processing (higher = faster but less accurate)
+  # 1 = original size, 4 = quarter size
+  downscale_factor: 2
+  # Display settings
+  show_bounding_boxes: true
+  show_names: true
+  box_color: [0, 255, 0]  # RGB
+  text_color: [255, 255, 255]  # RGB
+  # Recognition timeout (in hours) to prevent duplicate entries
+  recognition_timeout: 8
+  # Unknown face detection
+  log_unknown_faces: true
+  unknown_face_label: "Unknown"
+
+# Audio settings
+audio:
+  # TTS engine: "pyttsx3" (offline) or "gtts" (online, requires internet)
+  engine: "pyttsx3"
+  # Voice settings
+  volume: 1.0  # 0.0-1.0
+  rate: 150  # Words per minute
+  voice_id: "default"  # Voice ID or "default"
+  language: "en"  # Language code (for gTTS)
+  # Greeting messages
+  welcome_message: "Hi {name}, welcome to work"
+  goodbye_message: "Goodbye {name}, see you tomorrow"
+  unknown_message: "Visitor detected. Access restricted."
+  # Anti-spam timeout in seconds (prevent repeated greetings)
+  greeting_timeout: 60
+
+# Logging settings
+logging:
+  # Log format: "csv" or "google_sheets"
+  format: "csv"
+  # CSV file settings
+  csv_filename_pattern: "%Y-%m.csv"  # strftime pattern
+  # Google Sheets settings (if enabled)
+  google_sheets:
+    credentials_file: "credentials.json"
+    sheet_id: ""  # Your Google Sheet ID
+    sheet_name: "Attendance"
+
+# Web dashboard settings
+dashboard:
+  # Web server
+  host: "0.0.0.0"
+  port: 5000
+  # Security
+  enable_authentication: true
+  username: "admin"
+  password: "password"  # Change this in production!
+  # Dashboard features
+  enable_live_feed: true
+  enable_logs_view: true
+  enable_employee_management: true
+  enable_settings: true
+  # Session timeout in minutes
+  session_timeout: 60
+
